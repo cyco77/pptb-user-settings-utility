@@ -40,6 +40,11 @@ export const FieldInfoTooltip: React.FC<FieldInfoTooltipProps> = ({
       return nameA.localeCompare(nameB);
     });
 
+    const handleClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+    };
+
     return (
       <Tooltip
         withArrow
@@ -65,7 +70,9 @@ export const FieldInfoTooltip: React.FC<FieldInfoTooltipProps> = ({
         }}
         relationship="label"
       >
-        <Info16Regular className={styles.infoIcon} />
+        <span onClick={handleClick} onMouseDown={handleClick}>
+          <Info16Regular className={styles.infoIcon} />
+        </span>
       </Tooltip>
     );
   } catch (error) {

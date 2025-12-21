@@ -1,10 +1,10 @@
 {
   "name": "pptb-usersettings-utiliy",
   "version": "0.1.0",
-  "displayName": "pptb-usersettings-utility",
-  "description": "A Power Platform Tool Box tool",
+  "displayName": "User Settings Utility",
+  "description": "Your tool to update user settings in Dataverse",
   "main": "index.html",
-  "author": "Power Platform ToolBox",
+  "author": "Lars Hildebrandt",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"

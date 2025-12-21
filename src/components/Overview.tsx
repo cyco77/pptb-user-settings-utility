@@ -57,11 +57,15 @@ export const Overview: React.FC<IOverviewProps> = ({ connection }) => {
     mainContainer: {
       display: "flex",
       gap: "16px",
+      height: "100%",
+      overflow: "hidden",
     },
     leftPanel: {
       flex: "0 0 60%",
       display: "flex",
       flexDirection: "column",
+      overflow: "hidden",
+      minHeight: 0,
     },
     rightPanel: {
       flex: "0 0 40%",
@@ -72,6 +76,8 @@ export const Overview: React.FC<IOverviewProps> = ({ connection }) => {
       backgroundColor: tokens.colorNeutralBackground2,
       borderRadius: tokens.borderRadiusMedium,
       padding: "20px",
+      overflowY: "auto",
+      minHeight: 0,
     },
     filterContainer: {
       display: "flex",
@@ -80,7 +86,11 @@ export const Overview: React.FC<IOverviewProps> = ({ connection }) => {
       gap: "12px",
       flexShrink: 0,
     },
-    gridContainer: {},
+    gridContainer: {
+      flex: 1,
+      overflowY: "auto",
+      minHeight: 0,
+    },
     buttonGroup: {
       display: "flex",
       gap: "8px",

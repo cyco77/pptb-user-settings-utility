@@ -9,8 +9,27 @@ import {
   TableCellLayout,
   TableColumnDefinition,
   createTableColumn,
+  makeStyles,
+  tokens,
 } from "@fluentui/react-components";
 import { Systemuser } from "../types/systemuser";
+
+const useStyles = makeStyles({
+  grid: {
+    height: "100%",
+    overflow: "hidden",
+    display: "flex",
+    flexDirection: "column",
+  },
+  header: {
+    flexShrink: 0,
+  },
+  body: {
+    flex: 1,
+    overflowY: "auto",
+    minHeight: 0,
+  },
+});
 
 interface ISystemuserGridProps {
   systemusers: Systemuser[];
@@ -21,6 +40,7 @@ export const SystemuserGrid: React.FC<ISystemuserGridProps> = ({
   systemusers,
   onSelectionChange,
 }) => {
+  const styles = useStyles();
   const columns: TableColumnDefinition<Systemuser>[] = [
     createTableColumn<Systemuser>({
       columnId: "fullname",
@@ -85,15 +105,16 @@ export const SystemuserGrid: React.FC<ISystemuserGridProps> = ({
         );
         onSelectionChange(selectedUsers);
       }}
+      className={styles.grid}
     >
-      <DataGridHeader>
+      <DataGridHeader className={styles.header}>
         <DataGridRow>
           {({ renderHeaderCell }) => (
             <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>
           )}
         </DataGridRow>
       </DataGridHeader>
-      <DataGridBody<Systemuser>>
+      <DataGridBody<Systemuser> className={styles.body}>
         {({ item, rowId }) => (
           <DataGridRow<Systemuser> key={rowId}>
             {({ renderCell }) => (
