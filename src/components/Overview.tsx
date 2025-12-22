@@ -32,7 +32,6 @@ export const Overview: React.FC<IOverviewProps> = ({ connection }) => {
   const [selectedSystemusers, setSelectedSystemusers] = useState<Systemuser[]>(
     []
   );
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [sitemapData, setSitemapData] = useState<SitemapData>({
     areas: [],
     subAreas: [],
@@ -50,7 +49,6 @@ export const Overview: React.FC<IOverviewProps> = ({ connection }) => {
 
   const handleSelectionChange = (users: Systemuser[]) => {
     setSelectedSystemusers(users);
-    setIsDrawerOpen(users.length > 0);
   };
 
   const useStyles = makeStyles({

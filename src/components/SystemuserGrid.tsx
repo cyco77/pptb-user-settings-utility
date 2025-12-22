@@ -6,7 +6,6 @@ import {
   DataGridHeader,
   DataGridHeaderCell,
   DataGridCell,
-  TableCellLayout,
   TableColumnDefinition,
   createTableColumn,
   makeStyles,

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   FluentProvider,
   Title3,
@@ -55,8 +55,8 @@ const useStyles = makeStyles({
 });
 
 function App() {
-  const { connection, isLoading, refreshConnection } = useConnection();
-  const { logs, addLog, clearLogs } = useEventLog();
+  const { connection, refreshConnection } = useConnection();
+  const { addLog } = useEventLog();
   const [theme, setTheme] = useState<Theme>(teamsDarkTheme);
   const styles = useStyles();
 
@@ -102,30 +102,6 @@ function App() {
   useEffect(() => {
     addLog("React Sample Tool initialized", "success");
   }, [addLog]);
-
-  const showNotification = useCallback(
-    async (
-      title: string,
-      body: string,
-      type: "success" | "info" | "warning" | "error"
-    ) => {
-      try {
-        await window.toolboxAPI.utils.showNotification({
-          title,
-          body,
-          type,
-          duration: 3000,
-        });
-        addLog(`Notification shown: ${title} - ${body}`, type);
-      } catch (error) {
-        addLog(
-          `Error showing notification: ${(error as Error).message}`,
-          "error"
-        );
-      }
-    },
-    [addLog]
-  );
 
   return (
     <FluentProvider theme={theme}>
