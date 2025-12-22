@@ -73,7 +73,6 @@ export const Overview: React.FC<IOverviewProps> = ({ connection }) => {
       flexDirection: "column",
       borderLeft: `2px solid ${tokens.colorNeutralStroke1}`,
       paddingLeft: "20px",
-      backgroundColor: tokens.colorNeutralBackground2,
       borderRadius: tokens.borderRadiusMedium,
       padding: "20px",
       overflowY: "auto",

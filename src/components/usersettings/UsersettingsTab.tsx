@@ -26,6 +26,7 @@ interface IUsersettingsTabProps {
   allUsersettings: Usersettings[];
   dashboards: Dashboard[];
   currencies: Currency[];
+  onFieldChange?: (fieldName: keyof Usersettings, newValue: any) => void;
 }
 
 export const UsersettingsTab: React.FC<IUsersettingsTabProps> = ({
@@ -39,6 +40,7 @@ export const UsersettingsTab: React.FC<IUsersettingsTabProps> = ({
   allUsersettings,
   dashboards,
   currencies,
+  onFieldChange,
 }) => {
   const styles = useUsersettingsStyles();
   const [editedSettings, setEditedSettings] = useState<Usersettings | null>(
@@ -63,6 +65,7 @@ export const UsersettingsTab: React.FC<IUsersettingsTabProps> = ({
     setEditedSettings,
     systemusers,
     formatContext,
+    onFieldChange,
   };
 
   const {
@@ -137,6 +140,9 @@ export const UsersettingsTab: React.FC<IUsersettingsTabProps> = ({
                 ? onSelect(data.optionValue || undefined)
                 : { [field]: data.optionValue || undefined };
               setEditedSettings({ ...editedSettings, ...updates });
+              // Notify parent of the primary field change
+              const newValue = data.optionValue || undefined;
+              onFieldChange?.(field, newValue);
             }
           }}
         >
@@ -186,10 +192,12 @@ export const UsersettingsTab: React.FC<IUsersettingsTabProps> = ({
               const selectedValue = data.optionValue
                 ? parseInt(data.optionValue)
                 : undefined;
+              const newValue = selectedValue === 0 ? undefined : selectedValue;
               setEditedSettings({
                 ...editedSettings,
-                [field]: selectedValue === 0 ? undefined : selectedValue,
+                [field]: newValue,
               });
+              onFieldChange?.(field, newValue);
             }
           }}
         >
@@ -274,6 +282,8 @@ export const UsersettingsTab: React.FC<IUsersettingsTabProps> = ({
           sitemapData.areas.map((a) => ({ value: a.id, label: a.title })),
           (value) => {
             setSelectedArea(value || "");
+            // Also track the subarea reset
+            onFieldChange?.("homepagesubarea", undefined);
             return { homepagearea: value, homepagesubarea: undefined };
           }
         )}

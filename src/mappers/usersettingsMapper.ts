@@ -5,9 +5,7 @@ export const mapUsersettings = (
 ): Usersettings | null => {
   if (!rawData) return null;
 
-  const systemuserid = rawData["systemuserid"];
-
-  if (typeof systemuserid !== "string") return null;
+  const systemuserid = rawData["systemuserid"] as string;
 
   return {
     systemuserid: systemuserid,

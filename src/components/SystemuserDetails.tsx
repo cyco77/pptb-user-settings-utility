@@ -1,5 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { makeStyles, tokens } from "@fluentui/react-components";
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  makeStyles,
+  tokens,
+  Button,
+  Spinner,
+} from "@fluentui/react-components";
+import { SaveRegular } from "@fluentui/react-icons";
 import { Systemuser } from "../types/systemuser";
 import { Usersettings } from "../types/usersettings";
 import { SitemapData } from "../types/sitemap";
@@ -8,7 +14,11 @@ import { Language } from "../types/language";
 import { Format } from "../types/format";
 import { Dashboard } from "../types/dashboard";
 import { Currency } from "../types/currency";
-import { loadUsersettingsBySystemuserId } from "../services/dataverseService";
+import { PendingChangesMap } from "../types/pendingChanges";
+import {
+  loadUsersettingsBySystemuserId,
+  updateMultipleUsersettings,
+} from "../services/dataverseService";
 import { UsersettingsTab } from "./UsersettingsTab";
 
 interface ISystemuserDetailsProps {
@@ -34,11 +44,23 @@ const useStyles = makeStyles({
     marginBottom: tokens.spacingVerticalM,
     borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
     flexShrink: 0,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  headerLeft: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalXS,
   },
   title: {
     fontSize: tokens.fontSizeBase500,
     fontWeight: tokens.fontWeightSemibold,
     color: tokens.colorBrandForeground1,
+  },
+  changesCount: {
+    fontSize: tokens.fontSizeBase200,
+    color: tokens.colorNeutralForeground3,
   },
   body: {
     flex: 1,
@@ -70,8 +92,20 @@ export const SystemuserDetails: React.FC<ISystemuserDetailsProps> = ({
   const [allUsersettings, setAllUsersettings] = useState<Usersettings[]>([]);
   const [validSystemusers, setValidSystemusers] = useState<Systemuser[]>([]);
   const [isLoadingUsersettings, setIsLoadingUsersettings] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [pendingChanges, setPendingChanges] = useState<PendingChangesMap>(
+    new Map()
+  );
 
+  // Count total pending changes across all users
+  const totalChangesCount = Array.from(pendingChanges.values()).reduce(
+    (sum, userChanges) => sum + userChanges.changes.size,
+    0
+  );
+
+  // Reset pending changes when selection changes
   useEffect(() => {
+    setPendingChanges(new Map());
     if (systemusers.length > 0) {
       loadUsersettingsData(systemusers);
     } else {
@@ -80,6 +114,85 @@ export const SystemuserDetails: React.FC<ISystemuserDetailsProps> = ({
       setValidSystemusers([]);
     }
   }, [systemusers]);
+
+  // Handle field change - track changes for all selected users
+  const handleFieldChange = useCallback(
+    (fieldName: keyof Usersettings, newValue: any) => {
+      setPendingChanges((prev) => {
+        const updated = new Map(prev);
+
+        // Apply change to all valid selected users
+        validSystemusers.forEach((user) => {
+          let userChanges = updated.get(user.systemuserId);
+
+          if (!userChanges) {
+            userChanges = {
+              systemuserid: user.systemuserId,
+              userFullname: user.fullname,
+              changes: new Map(),
+            };
+            updated.set(user.systemuserId, userChanges);
+          }
+
+          // Set the change (or remove if undefined which means "no change")
+          if (newValue === undefined) {
+            userChanges.changes.delete(fieldName);
+            // Remove user entry if no changes left
+            if (userChanges.changes.size === 0) {
+              updated.delete(user.systemuserId);
+            }
+          } else {
+            userChanges.changes.set(fieldName, newValue);
+          }
+        });
+
+        return updated;
+      });
+    },
+    [validSystemusers]
+  );
+
+  // Save all pending changes
+  const handleSave = async () => {
+    if (pendingChanges.size === 0) return;
+
+    setIsSaving(true);
+    try {
+      const changesArray = Array.from(pendingChanges.values());
+
+      const result = await updateMultipleUsersettings(changesArray);
+
+      if (result.failed.length === 0) {
+        await window.toolboxAPI.utils.showNotification({
+          title: "Success",
+          body: `Updated settings for ${result.successful.length} user(s)`,
+          type: "success",
+          duration: 3000,
+        });
+        // Clear pending changes after successful save
+        setPendingChanges(new Map());
+        // Reload user settings to reflect changes
+        await loadUsersettingsData(systemusers);
+      } else {
+        const failedNames = result.failed.map((f) => f.userName).join(", ");
+        await window.toolboxAPI.utils.showNotification({
+          title: "Partial Success",
+          body: `Updated ${result.successful.length} user(s). Failed: ${failedNames}`,
+          type: "warning",
+          duration: 5000,
+        });
+      }
+    } catch (error) {
+      await window.toolboxAPI.utils.showNotification({
+        title: "Error",
+        body: `Failed to save changes: ${(error as Error).message}`,
+        type: "error",
+        duration: 5000,
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const loadUsersettingsData = async (users: Systemuser[]) => {
     setIsLoadingUsersettings(true);
@@ -189,11 +302,27 @@ export const SystemuserDetails: React.FC<ISystemuserDetailsProps> = ({
       ) : (
         <>
           <div className={styles.header}>
-            <div className={styles.title}>
-              {systemusers.length === 1
-                ? systemusers[0].fullname
-                : `${systemusers.length} users selected`}
+            <div className={styles.headerLeft}>
+              <div className={styles.title}>
+                {systemusers.length === 1
+                  ? systemusers[0].fullname
+                  : `${systemusers.length} users selected`}
+              </div>
+              {totalChangesCount > 0 && (
+                <div className={styles.changesCount}>
+                  {totalChangesCount} pending change
+                  {totalChangesCount !== 1 ? "s" : ""}
+                </div>
+              )}
             </div>
+            <Button
+              appearance="primary"
+              icon={isSaving ? <Spinner size="tiny" /> : <SaveRegular />}
+              disabled={totalChangesCount === 0 || isSaving}
+              onClick={handleSave}
+            >
+              {isSaving ? "Saving..." : "Save"}
+            </Button>
           </div>
           <div className={styles.body}>
             <UsersettingsTab
@@ -207,6 +336,7 @@ export const SystemuserDetails: React.FC<ISystemuserDetailsProps> = ({
               allUsersettings={allUsersettings}
               dashboards={dashboards}
               currencies={currencies}
+              onFieldChange={handleFieldChange}
             />
           </div>
         </>

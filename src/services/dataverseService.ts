@@ -14,6 +14,7 @@ import { Language } from "../types/language";
 import { Format } from "../types/format";
 import { Dashboard } from "../types/dashboard";
 import { Currency } from "../types/currency";
+import { UserPendingChanges } from "../types/pendingChanges";
 
 export const loadSystemusers = async (): Promise<Systemuser[]> => {
   const selectFields = [
@@ -390,4 +391,99 @@ export const loadCurrencies = async (): Promise<Currency[]> => {
     console.error("Error loading currencies:", error);
     return [];
   }
+};
+
+/**
+ * Update user settings for a single user with only the changed attributes
+ */
+export const updateUsersettings = async (
+  userChanges: UserPendingChanges
+): Promise<{ success: boolean; error?: string }> => {
+  try {
+    const { systemuserid, changes } = userChanges;
+
+    if (changes.size === 0) {
+      return { success: true };
+    }
+
+    // Build the update payload with only changed fields
+    const updatePayload: Record<string, any> = {};
+
+    changes.forEach((value, fieldName) => {
+      // Handle special field mappings for Dataverse
+      if (fieldName === "transactioncurrencyid" && value) {
+        // Currency is a lookup field - use @odata.bind
+        updatePayload[
+          "transactioncurrencyid@odata.bind"
+        ] = `/transactioncurrencies(${value})`;
+      } else {
+        // Regular field - convert to lowercase for Dataverse
+        updatePayload[fieldName.toLowerCase()] = value ?? null;
+      }
+    });
+
+    console.log(
+      `Updating usersettings for user ${systemuserid}:`,
+      updatePayload
+    );
+
+    // Use PATCH to update the usersettings record
+    await window.dataverseAPI.update(
+      "usersettingscollection",
+      systemuserid,
+      updatePayload
+    );
+
+    console.log(`Successfully updated usersettings for user ${systemuserid}`);
+    return { success: true };
+  } catch (error) {
+    console.error(
+      `Error updating usersettings for user ${userChanges.systemuserid}:`,
+      error
+    );
+    return {
+      success: false,
+      error: (error as Error).message || "Unknown error occurred",
+    };
+  }
+};
+
+/**
+ * Update user settings for multiple users
+ */
+export const updateMultipleUsersettings = async (
+  allChanges: UserPendingChanges[],
+  onProgress?: (completed: number, total: number, userName: string) => void
+): Promise<{
+  successful: string[];
+  failed: Array<{ userId: string; userName: string; error: string }>;
+}> => {
+  const successful: string[] = [];
+  const failed: Array<{ userId: string; userName: string; error: string }> = [];
+
+  for (let i = 0; i < allChanges.length; i++) {
+    const userChanges = allChanges[i];
+
+    if (onProgress) {
+      onProgress(i, allChanges.length, userChanges.userFullname);
+    }
+
+    const result = await updateUsersettings(userChanges);
+
+    if (result.success) {
+      successful.push(userChanges.systemuserid);
+    } else {
+      failed.push({
+        userId: userChanges.systemuserid,
+        userName: userChanges.userFullname,
+        error: result.error || "Unknown error",
+      });
+    }
+  }
+
+  if (onProgress) {
+    onProgress(allChanges.length, allChanges.length, "Complete");
+  }
+
+  return { successful, failed };
 };

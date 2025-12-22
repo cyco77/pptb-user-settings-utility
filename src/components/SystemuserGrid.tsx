@@ -10,7 +10,6 @@ import {
   TableColumnDefinition,
   createTableColumn,
   makeStyles,
-  tokens,
 } from "@fluentui/react-components";
 import { Systemuser } from "../types/systemuser";
 
@@ -28,6 +27,12 @@ const useStyles = makeStyles({
     flex: 1,
     overflowY: "auto",
     minHeight: 0,
+  },
+  cellStyles: {
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    maxWidth: "100%",
   },
 });
 
@@ -51,7 +56,11 @@ export const SystemuserGrid: React.FC<ISystemuserGridProps> = ({
         return "Full Name";
       },
       renderCell: (item) => {
-        return <TableCellLayout>{item.fullname}</TableCellLayout>;
+        return (
+          <span title={item.fullname || "-"} className={styles.cellStyles}>
+            {item.fullname}
+          </span>
+        );
       },
     }),
     createTableColumn<Systemuser>({
@@ -66,7 +75,12 @@ export const SystemuserGrid: React.FC<ISystemuserGridProps> = ({
       },
       renderCell: (item) => {
         return (
-          <TableCellLayout>{item.internalemailaddress || "-"}</TableCellLayout>
+          <span
+            title={item.internalemailaddress || "-"}
+            className={styles.cellStyles}
+          >
+            {item.internalemailaddress || "-"}
+          </span>
         );
       },
     }),
@@ -82,7 +96,28 @@ export const SystemuserGrid: React.FC<ISystemuserGridProps> = ({
       },
       renderCell: (item) => {
         return (
-          <TableCellLayout>{item.businessunitname || "-"}</TableCellLayout>
+          <span
+            title={item.businessunitname || "-"}
+            className={styles.cellStyles}
+          >
+            {item.businessunitname || "-"}
+          </span>
+        );
+      },
+    }),
+    createTableColumn<Systemuser>({
+      columnId: "systemuserid",
+      compare: (a, b) => {
+        return a.systemuserId.localeCompare(b.systemuserId);
+      },
+      renderHeaderCell: () => {
+        return "System User ID";
+      },
+      renderCell: (item) => {
+        return (
+          <span title={item.systemuserId} className={styles.cellStyles}>
+            {item.systemuserId}
+          </span>
         );
       },
     }),

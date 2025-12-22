@@ -19,6 +19,7 @@ export interface FieldRendererProps {
   setEditedSettings: React.Dispatch<React.SetStateAction<Usersettings | null>>;
   systemusers: Systemuser[];
   formatContext: FormatValueContext;
+  onFieldChange?: (fieldName: keyof Usersettings, newValue: any) => void;
 }
 
 /**
@@ -60,8 +61,20 @@ export const useLabelWithInfo = (props: FieldRendererProps) => {
  * Hook providing field rendering functions
  */
 export const useFieldRenderers = (props: FieldRendererProps) => {
-  const { allUsersettings, editedSettings, setEditedSettings } = props;
+  const { allUsersettings, editedSettings, setEditedSettings, onFieldChange } =
+    props;
   const renderLabelWithInfo = useLabelWithInfo(props);
+
+  // Helper to update state and notify parent of change
+  const updateField = (field: keyof Usersettings, newValue: any) => {
+    if (editedSettings) {
+      setEditedSettings({
+        ...editedSettings,
+        [field]: newValue,
+      });
+      onFieldChange?.(field, newValue);
+    }
+  };
 
   const renderTextField = (
     label: string,
@@ -87,10 +100,8 @@ export const useFieldRenderers = (props: FieldRendererProps) => {
           readOnly={!editable}
           onChange={(e) => {
             if (editable && editedSettings) {
-              setEditedSettings({
-                ...editedSettings,
-                [field]: e.target.value || undefined,
-              });
+              const newValue = e.target.value || undefined;
+              updateField(field, newValue);
             }
           }}
         />
@@ -127,10 +138,8 @@ export const useFieldRenderers = (props: FieldRendererProps) => {
           onOptionSelect={(_e, data) => {
             if (editedSettings && data.optionValue !== undefined) {
               const selectedValue = parseInt(data.optionValue);
-              setEditedSettings({
-                ...editedSettings,
-                [field]: selectedValue === 0 ? undefined : selectedValue,
-              });
+              const newValue = selectedValue === 0 ? undefined : selectedValue;
+              updateField(field, newValue);
             }
           }}
         >
@@ -179,10 +188,7 @@ export const useFieldRenderers = (props: FieldRendererProps) => {
             if (editedSettings) {
               const newValue =
                 data.optionValue === "0" ? undefined : data.optionValue === "2";
-              setEditedSettings({
-                ...editedSettings,
-                [field]: newValue,
-              });
+              updateField(field, newValue);
             }
           }}
         >
@@ -241,10 +247,7 @@ export const useFieldRenderers = (props: FieldRendererProps) => {
               const parsedValue = parseValue
                 ? parseValue(rawValue || "")
                 : rawValue || undefined;
-              setEditedSettings({
-                ...editedSettings,
-                [field]: parsedValue,
-              });
+              updateField(field, parsedValue);
             }
           }}
         >
