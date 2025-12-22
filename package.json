@@ -1,5 +1,5 @@
 {
-  "name": "pptb-usersettings-utiliy",
+  "name": "@cyco77/pptb-usersettings-utiliy",
   "version": "0.1.0",
   "displayName": "User Settings Utility",
   "description": "Your tool to update user settings in Dataverse",

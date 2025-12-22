@@ -1,11 +1,11 @@
 {
-  "name": "pptb-usersettings-utiliy",
+  "name": "@cyco77/pptb-usersettings-utiliy",
   "version": "0.1.0",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "pptb-usersettings-utiliy",
+      "name": "@cyco77/pptb-usersettings-utiliy",
       "version": "0.1.0",
       "license": "MIT",
       "dependencies": {
