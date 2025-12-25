@@ -12,7 +12,7 @@
 
 ### Dark Theme
 
-![Plugin Documentation Generator - Dark Theme](screenshots/main_dark.png)
+![User Settings Utility - Dark Theme](screenshots/main_dark.png)
 
 ## Features
 
