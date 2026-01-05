@@ -100,8 +100,12 @@ function App() {
 
   // Add initial log (run only once on mount)
   useEffect(() => {
-    addLog("React Sample Tool initialized", "success");
-  }, [addLog]);
+    const initialite = async () => {
+      await updateThemeBasedOnSettings();
+    };
+
+    initialite();
+  }, []);
 
   return (
     <FluentProvider theme={theme}>

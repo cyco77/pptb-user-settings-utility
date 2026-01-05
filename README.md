@@ -1,7 +1,7 @@
 # User Settings Utility
 
 <p align="center">
-  <img src="icon/usersettings-utility_small.png" alt="User Settings Utility Logo" width="314" height="150">
+  <img src="https://raw.githubusercontent.com/cyco77/pptb-user-security-utility/HEAD/icon/user-team-security_small.png" alt="User Settings Utility Logo" width="314" height="150">
 </p>
 
 <p align="center">
@@ -12,7 +12,7 @@
 
 ### Dark Theme
 
-![User Settings Utility - Dark Theme](screenshots/main_dark.png)
+![User Settings Utility - Dark Theme](https://raw.githubusercontent.com/cyco77/pptb-user-security-utility/HEAD/screenshots/main_dark.png)
 
 ## Features
 
