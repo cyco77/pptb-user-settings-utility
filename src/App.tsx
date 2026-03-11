@@ -9,11 +9,7 @@ import {
   teamsLightTheme,
   Theme,
 } from "@fluentui/react-components";
-import {
-  useConnection,
-  useEventLog,
-  useToolboxEvents,
-} from "./hooks/useToolboxAPI";
+import { useConnection, useToolboxEvents } from "./hooks/useToolboxAPI";
 
 import iconImage from "../icon/usersettings-utility_small.png";
 import { Overview } from "./components/Overview";
@@ -56,7 +52,6 @@ const useStyles = makeStyles({
 
 function App() {
   const { connection, refreshConnection } = useConnection();
-  const { addLog } = useEventLog();
   const [theme, setTheme] = useState<Theme>(teamsDarkTheme);
   const styles = useStyles();
 
@@ -84,7 +79,7 @@ function App() {
           break;
       }
     },
-    [refreshConnection]
+    [refreshConnection],
   );
 
   async function updateThemeBasedOnSettings() {

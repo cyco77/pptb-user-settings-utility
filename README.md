@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  A Power Platform Tool Box (PPTB) plugin for viewing and updating Dynamics 365 / Dataverse user settings. This tool provides an intuitive interface to manage user settings across multiple users simultaneously.
+  A Power Platform Toolbox (PPTB) plugin for viewing and updating Dynamics 365 / Dataverse user settings. This tool provides an intuitive interface to manage user settings across multiple users simultaneously.
 </p>
 
 ## Screenshots
