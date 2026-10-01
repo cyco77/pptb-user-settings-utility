@@ -115,7 +115,7 @@ cd pptb-user-settings-utility
 2. Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 ## Development
@@ -125,7 +125,7 @@ npm install
 Start development server with HMR:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 The tool will be available at \`http://localhost:5173\`
@@ -135,7 +135,7 @@ The tool will be available at \`http://localhost:5173\`
 Build the tool in watch mode for continuous updates:
 
 ```bash
-npm run watch
+pnpm watch
 ```
 
 ### Production Build
@@ -143,7 +143,7 @@ npm run watch
 Build the optimized production version:
 
 ```bash
-npm run build
+pnpm build
 ```
 
 The output will be in the \`dist/\` directory.
@@ -153,7 +153,7 @@ The output will be in the \`dist/\` directory.
 Preview the production build locally:
 
 ```bash
-npm run preview
+pnpm preview
 ```
 
 ## Usage
@@ -163,14 +163,10 @@ npm run preview
 1. Build the tool:
 
 ```bash
-   npm run build
+   pnpm build
 ```
 
-2. Package the tool (creates npm-shrinkwrap.json):
-
-```bash
-   npm run finalize-package
-```
+2. Dependencies are locked in `pnpm-lock.yaml`; no separate shrinkwrap-generation step is needed.
 
 3. Install in Power Platform Toolbox using the PPTB interface
 
@@ -240,7 +236,7 @@ await window.toolboxAPI.utils.showNotification({
 ## Development and Releases
 
 - Create feature branches from `dev` and open pull requests back to `dev`.
-- Add a Changeset to every feature pull request with `npm run changeset`, then commit the generated file in `.changeset/`.
+- Add a Changeset to every feature pull request with `pnpm changeset`, then commit the generated file in `.changeset/`.
 - Open a release pull request from `dev` to `main` when changes are ready.
 - After that pull request is merged, GitHub Actions creates or updates a `Version Packages` pull request on `main`.
 - Review and merge the version pull request. GitHub Actions then builds the package, publishes it to npm, and creates a GitHub Release with downloadable archives.
@@ -252,7 +248,7 @@ Changeset release types follow SemVer: `patch` for fixes, `minor` for backwards-
 - Create a GitHub Actions secret named `CHANGESETS_GITHUB_TOKEN` with **Contents: read and write** and **Pull requests: read and write** for this repository. A GitHub App token can be used instead.
 - In repository settings under **Actions > General**, allow GitHub Actions to create and approve pull requests.
 - On npm, configure GitHub Actions trusted publishing for `@cyco77/pptb-usersettings-utiliy` using owner `cyco77`, repository `pptb-user-settings-utility`, and workflow `release.yml`. Allow direct `npm publish` for this publisher.
-- Releases use Node.js 24 and npm 11.20.0 for npm Trusted Publishing and `npm-shrinkwrap.json`. No npm write token is needed.
+- The project uses pnpm 11.0.0 for installs and releases. Packages are published to npm through GitHub Actions trusted publishing. No npm write token is needed.
 - Local development and Changesets commands require Node.js 24 or newer.
 - Protect `dev` and `main` with required pull requests and CI checks. Keep `main` as the production branch.
 
