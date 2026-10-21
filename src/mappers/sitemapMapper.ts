@@ -20,7 +20,6 @@ const getLocalizedTitle = (node: Element, lcid?: number): string => {
   return (
     node.getAttribute("Title") ||
     node.getAttribute("ResourceId") ||
-    node.getAttribute("Id") ||
     ""
   );
 };
@@ -67,9 +66,8 @@ export const mapSitemap = (sitemapXml: string, lcid?: number): SitemapData => {
       while (parent && parent.tagName !== "Area") {
         parent = parent.parentElement;
       }
-      if (parent) {
-        areaId = parent.getAttribute("Id") || "";
-      }
+      // Each queried subarea is nested under an Area element.
+      areaId = parent?.getAttribute("Id") || "";
 
       if (id && areaId) {
         subAreas.push({ id, title: title || id, areaId });

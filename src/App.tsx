@@ -47,6 +47,7 @@ const useStyles = makeStyles({
     flex: 1,
     overflow: "hidden",
     minHeight: 0,
+    minWidth: 0,
   },
 });
 
@@ -84,6 +85,7 @@ function App() {
 
   async function updateThemeBasedOnSettings() {
     const theme = await window.toolboxAPI.utils.getCurrentTheme();
+    document.body.dataset.theme = theme === "dark" ? "dark" : "light";
     if (theme === "dark") {
       setTheme(teamsDarkTheme);
     } else {

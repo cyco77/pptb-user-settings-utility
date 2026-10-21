@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Field, Option, Combobox } from "@fluentui/react-components";
+import { Option, Combobox } from "@fluentui/react-components";
 import { Usersettings } from "../../types/usersettings";
 import { SitemapData } from "../../types/sitemap";
 import { Timezone } from "../../types/timezone";
@@ -14,6 +14,7 @@ import { SettingsSection } from "./SettingsSection";
 import { getFieldEffectiveValue } from "./fieldStateUtils";
 import { FormatValueContext } from "./formatFieldValue";
 import { optionSetMappings } from "./optionSetMappings";
+import { SettingField } from "./SettingField";
 
 interface IUsersettingsTabProps {
   usersettings: Usersettings | null;
@@ -129,7 +130,7 @@ export const UsersettingsTab: React.FC<IUsersettingsTabProps> = ({
         : [String(value)];
 
     return (
-      <Field label={renderLabelWithInfo(label, field)} size="medium">
+      <SettingField fieldKey={field} label={renderLabelWithInfo(label, field)}>
         <Combobox
           size="medium"
           value={displayValue}
@@ -155,7 +156,7 @@ export const UsersettingsTab: React.FC<IUsersettingsTabProps> = ({
             </Option>
           ))}
         </Combobox>
-      </Field>
+      </SettingField>
     );
   };
 
@@ -178,21 +179,20 @@ export const UsersettingsTab: React.FC<IUsersettingsTabProps> = ({
 
     const selectedOptions =
       showNoChange || value === undefined || value === null
-        ? ["0"]
+        ? [""]
         : [String(value)];
 
     return (
-      <Field label={renderLabelWithInfo(label, field)} size="medium">
+      <SettingField fieldKey={field} label={renderLabelWithInfo(label, field)}>
         <Combobox
           size="medium"
           value={displayValue}
           selectedOptions={selectedOptions}
           onOptionSelect={(_e, data) => {
             if (editedSettings) {
-              const selectedValue = data.optionValue
+              const newValue = data.optionValue
                 ? parseInt(data.optionValue)
                 : undefined;
-              const newValue = selectedValue === 0 ? undefined : selectedValue;
               setEditedSettings({
                 ...editedSettings,
                 [field]: newValue,
@@ -201,7 +201,7 @@ export const UsersettingsTab: React.FC<IUsersettingsTabProps> = ({
             }
           }}
         >
-          <Option key="0" value="0">
+          <Option key="no-change" value="">
             No change
           </Option>
           {items.map((item) => (
@@ -210,7 +210,7 @@ export const UsersettingsTab: React.FC<IUsersettingsTabProps> = ({
             </Option>
           ))}
         </Combobox>
-      </Field>
+      </SettingField>
     );
   };
 
@@ -222,6 +222,11 @@ export const UsersettingsTab: React.FC<IUsersettingsTabProps> = ({
           "Records Per Page",
           "paginglimit",
           optionSetMappings.paginglimit
+        )}
+        {renderDropdown(
+          "Display Density",
+          "displaydensity",
+          optionSetMappings.displaydensity
         )}
       </SettingsSection>
 
@@ -259,6 +264,11 @@ export const UsersettingsTab: React.FC<IUsersettingsTabProps> = ({
             label: `${l.language}${l.region ? ` (${l.region})` : ""}`,
           }))
         )}
+        {renderBooleanDropdown(
+          "Enable Country/Region Code Prefixing",
+          "isdefaultcountrycodecheckenabled"
+        )}
+        {renderTextField("Country/Region Code Prefix", "defaultcountrycode", true)}
         {renderComboboxField(
           "Currency",
           "transactioncurrencyid",
@@ -297,6 +307,11 @@ export const UsersettingsTab: React.FC<IUsersettingsTabProps> = ({
           "defaultdashboardid",
           dashboards.map((d) => ({ value: d.formid, label: d.name }))
         )}
+        {renderDropdown(
+          "Default Form Mode",
+          "entityformmode",
+          optionSetMappings.entityformmode
+        )}
       </SettingsSection>
 
       {/* Advanced Find */}
@@ -322,6 +337,11 @@ export const UsersettingsTab: React.FC<IUsersettingsTabProps> = ({
       {/* Sales & Marketing */}
       <SettingsSection title="Sales & Marketing">
         {renderBooleanDropdown("Show Week Number", "showweeknumber")}
+        {renderDropdown(
+          "Visualization Pane Layout",
+          "visualizationpanelayout",
+          optionSetMappings.visualizationpanelayout
+        )}
         {renderBooleanDropdown(
           "Use CRM Form for Appointment",
           "usecrmformforappointment"
@@ -367,6 +387,10 @@ export const UsersettingsTab: React.FC<IUsersettingsTabProps> = ({
           "Incoming Email Filtering Method",
           "incomingemailfilteringmethod",
           optionSetMappings.incomingemailfilteringmethod
+        )}
+        {renderBooleanDropdown(
+          "Show Emails as Conversations on Timeline",
+          "isemailconversationviewenabled"
         )}
         {renderDropdown(
           "Auto Create Contact on Promote",

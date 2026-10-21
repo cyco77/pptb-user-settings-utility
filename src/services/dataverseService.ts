@@ -174,6 +174,7 @@ export const loadUsersettingsBySystemuserId = async (
     "dateformatstring",
     "dateseparator",
     "decimalsymbol",
+    "displaydensity",
     "defaultcalendarview",
     "defaultcountrycode",
     "defaultdashboardid",

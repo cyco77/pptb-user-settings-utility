@@ -70,7 +70,11 @@ export const FieldInfoTooltip: React.FC<FieldInfoTooltipProps> = ({
         }}
         relationship="label"
       >
-        <span onClick={handleClick} onMouseDown={handleClick}>
+        <span
+          className={styles.infoIconWrapper}
+          onClick={handleClick}
+          onMouseDown={handleClick}
+        >
           <Info16Regular className={styles.infoIcon} />
         </span>
       </Tooltip>

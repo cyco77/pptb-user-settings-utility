@@ -22,6 +22,7 @@ export type Usersettings = {
   dateformatcode?: number;
   dateformatstring?: string;
   dateseparator?: string;
+  displaydensity?: number;
   decimalsymbol?: string;
   defaultcalendarview?: number;
   defaultcountrycode?: string;
@@ -89,14 +90,14 @@ export type Usersettings = {
   trytogglesets?: string;
   trytogglestatus?: number;
   uilanguageid?: number;
-  usecrmformforappointment?: number;
-  usecrmformforcontact?: number;
-  usecrmformforemail?: number;
-  usecrmformfortask?: number;
+  usecrmformforappointment?: boolean;
+  usecrmformforcontact?: boolean;
+  usecrmformforemail?: boolean;
+  usecrmformfortask?: boolean;
   useimagestrips?: boolean;
   userprofile?: string;
   versionnumber?: number;
-  visualizationpanelayout?: string;
+  visualizationpanelayout?: number;
   workdaystarttime?: string;
   workdaystoptime?: string;
 };

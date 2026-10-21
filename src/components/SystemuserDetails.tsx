@@ -37,6 +37,7 @@ const useStyles = makeStyles({
     flexDirection: "column",
     height: "100%",
     minHeight: 0,
+    minWidth: 0,
     overflow: "hidden",
   },
   header: {
@@ -65,7 +66,9 @@ const useStyles = makeStyles({
   body: {
     flex: 1,
     minHeight: 0,
-    overflow: "auto",
+    minWidth: 0,
+    overflowY: "auto",
+    overflowX: "hidden",
     paddingRight: tokens.spacingHorizontalS,
   },
   emptyState: {

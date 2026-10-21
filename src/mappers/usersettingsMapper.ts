@@ -53,6 +53,7 @@ export const mapUsersettings = (
     dateformatcode: rawData["dateformatcode"] as number | undefined,
     dateformatstring: rawData["dateformatstring"] as string | undefined,
     dateseparator: rawData["dateseparator"] as string | undefined,
+    displaydensity: rawData["displaydensity"] as number | undefined,
     decimalsymbol: rawData["decimalsymbol"] as string | undefined,
     defaultcalendarview: rawData["defaultcalendarview"] as number | undefined,
     defaultcountrycode: rawData["defaultcountrycode"] as string | undefined,
@@ -167,16 +168,16 @@ export const mapUsersettings = (
     trytogglestatus: rawData["trytogglestatus"] as number | undefined,
     uilanguageid: rawData["uilanguageid"] as number | undefined,
     usecrmformforappointment: rawData["usecrmformforappointment"] as
-      | number
+      | boolean
       | undefined,
-    usecrmformforcontact: rawData["usecrmformforcontact"] as number | undefined,
-    usecrmformforemail: rawData["usecrmformforemail"] as number | undefined,
-    usecrmformfortask: rawData["usecrmformfortask"] as number | undefined,
+    usecrmformforcontact: rawData["usecrmformforcontact"] as boolean | undefined,
+    usecrmformforemail: rawData["usecrmformforemail"] as boolean | undefined,
+    usecrmformfortask: rawData["usecrmformfortask"] as boolean | undefined,
     useimagestrips: rawData["useimagestrips"] as boolean | undefined,
     userprofile: rawData["userprofile"] as string | undefined,
     versionnumber: rawData["versionnumber"] as number | undefined,
     visualizationpanelayout: rawData["visualizationpanelayout"] as
-      | string
+      | number
       | undefined,
     workdaystarttime: rawData["workdaystarttime"] as string | undefined,
     workdaystoptime: rawData["workdaystoptime"] as string | undefined,

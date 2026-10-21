@@ -9,8 +9,21 @@ body {
     "Helvetica", "Arial", sans-serif;
   line-height: 1.6;
   min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+  color-scheme: light;
 }
 
 #root {
   height: 100vh;
+  overflow: hidden;
+}
+
+/* Keep native scrollbars aligned with the active Fluent theme. */
+body[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+body[data-theme="light"] {
+  color-scheme: light;
 }

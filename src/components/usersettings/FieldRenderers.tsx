@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Field,
   Input,
   Dropdown,
   Option,
@@ -12,6 +11,7 @@ import { getFieldEffectiveValue } from "./fieldStateUtils";
 import { FormatValueContext } from "./formatFieldValue";
 import { FieldInfoTooltip } from "./FieldInfoTooltip";
 import { useUsersettingsStyles } from "./styles";
+import { SettingField } from "./SettingField";
 
 export interface FieldRendererProps {
   allUsersettings: Usersettings[];
@@ -39,19 +39,18 @@ export const useLabelWithInfo = (props: FieldRendererProps) => {
       allUsersettings,
       editedSettings
     );
-    if (!state.isDifferent) {
-      return label;
-    }
 
     return (
       <div className={styles.fieldLabelWithInfo}>
         {label}
-        <FieldInfoTooltip
-          fieldKey={field}
-          systemusers={systemusers}
-          allUsersettings={allUsersettings}
-          formatContext={formatContext}
-        />
+        {state.isDifferent && (
+          <FieldInfoTooltip
+            fieldKey={field}
+            systemusers={systemusers}
+            allUsersettings={allUsersettings}
+            formatContext={formatContext}
+          />
+        )}
       </div>
     );
   };
@@ -93,7 +92,7 @@ export const useFieldRenderers = (props: FieldRendererProps) => {
       : String(value);
 
     return (
-      <Field label={renderLabelWithInfo(label, field)} size="medium">
+      <SettingField fieldKey={field} label={renderLabelWithInfo(label, field)}>
         <Input
           size="medium"
           value={displayValue}
@@ -105,7 +104,7 @@ export const useFieldRenderers = (props: FieldRendererProps) => {
             }
           }}
         />
-      </Field>
+      </SettingField>
     );
   };
 
@@ -122,7 +121,9 @@ export const useFieldRenderers = (props: FieldRendererProps) => {
     const resolvedValue =
       value !== undefined && value !== null ? value : undefined;
     const selectedOptions =
-      resolvedValue !== undefined ? [String(resolvedValue)] : ["0"];
+      resolvedValue !== undefined && !showNoChange
+        ? [String(resolvedValue)]
+        : [""];
     const displayValue = showNoChange
       ? "No change"
       : resolvedValue !== undefined
@@ -130,20 +131,21 @@ export const useFieldRenderers = (props: FieldRendererProps) => {
       : "No change";
 
     return (
-      <Field label={renderLabelWithInfo(label, field)} size="medium">
+      <SettingField fieldKey={field} label={renderLabelWithInfo(label, field)}>
         <Dropdown
           size="medium"
           value={displayValue}
           selectedOptions={selectedOptions}
           onOptionSelect={(_e, data) => {
             if (editedSettings && data.optionValue !== undefined) {
-              const selectedValue = parseInt(data.optionValue);
-              const newValue = selectedValue === 0 ? undefined : selectedValue;
+              const newValue = data.optionValue
+                ? parseInt(data.optionValue)
+                : undefined;
               updateField(field, newValue);
             }
           }}
         >
-          <Option key="0" value="0">
+          <Option key="no-change" value="">
             No change
           </Option>
           {Object.entries(options).map(([key, text]) => (
@@ -152,7 +154,7 @@ export const useFieldRenderers = (props: FieldRendererProps) => {
             </Option>
           ))}
         </Dropdown>
-      </Field>
+      </SettingField>
     );
   };
 
@@ -164,12 +166,12 @@ export const useFieldRenderers = (props: FieldRendererProps) => {
     );
     const baseValue = value;
     const selectedIndex = showNoChange
-      ? "0"
+      ? ""
       : baseValue === undefined || baseValue === null
-      ? "0"
+      ? ""
       : baseValue
-      ? "2"
-      : "1";
+      ? "true"
+      : "false";
     const displayValue = showNoChange
       ? "No change"
       : baseValue === undefined || baseValue === null
@@ -179,30 +181,30 @@ export const useFieldRenderers = (props: FieldRendererProps) => {
       : "No";
 
     return (
-      <Field label={renderLabelWithInfo(label, field)} size="medium">
+      <SettingField fieldKey={field} label={renderLabelWithInfo(label, field)}>
         <Dropdown
           size="medium"
           value={displayValue}
           selectedOptions={[selectedIndex]}
           onOptionSelect={(_e, data) => {
-            if (editedSettings) {
+            if (editedSettings && data.optionValue !== undefined) {
               const newValue =
-                data.optionValue === "0" ? undefined : data.optionValue === "2";
+                data.optionValue === "" ? undefined : data.optionValue === "true";
               updateField(field, newValue);
             }
           }}
         >
-          <Option key="0" value="0">
+          <Option key="no-change" value="">
             No change
           </Option>
-          <Option key="1" value="1">
+          <Option key="false" value="false">
             No
           </Option>
-          <Option key="2" value="2">
+          <Option key="true" value="true">
             Yes
           </Option>
         </Dropdown>
-      </Field>
+      </SettingField>
     );
   };
 
@@ -236,7 +238,7 @@ export const useFieldRenderers = (props: FieldRendererProps) => {
         : [String(value)];
 
     return (
-      <Field label={renderLabelWithInfo(label, field)} size="medium">
+      <SettingField fieldKey={field} label={renderLabelWithInfo(label, field)}>
         <Combobox
           size="medium"
           value={displayValue}
@@ -244,9 +246,11 @@ export const useFieldRenderers = (props: FieldRendererProps) => {
           onOptionSelect={(_e, data) => {
             if (editedSettings) {
               const rawValue = data.optionValue;
-              const parsedValue = parseValue
-                ? parseValue(rawValue || "")
-                : rawValue || undefined;
+              const parsedValue = rawValue
+                ? parseValue
+                  ? parseValue(rawValue)
+                  : rawValue
+                : undefined;
               updateField(field, parsedValue);
             }
           }}
@@ -260,7 +264,7 @@ export const useFieldRenderers = (props: FieldRendererProps) => {
             </Option>
           ))}
         </Combobox>
-      </Field>
+      </SettingField>
     );
   };
 

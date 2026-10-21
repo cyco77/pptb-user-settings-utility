@@ -40,15 +40,16 @@ export const optionSetMappings: Record<string, Record<number, string>> = {
     2: "Opted Out",
   },
   releasechannel: {
-    0: "Semi-Annual Channel",
-    1: "Monthly Channel",
-    2: "Microsoft Inner Channel",
+    0: "None",
+    1: "Semi-annual channel override",
+    2: "Monthly channel override",
+    3: "Inner channel override",
   },
   defaultsearchexperience: {
     0: "Relevance Search",
     1: "Categorized Search",
-    2: "Custom Search",
-    3: "Single Entity Search",
+    2: "Use last search",
+    3: "Custom search",
   },
   incomingemailfilteringmethod: {
     0: "All email messages",
@@ -63,8 +64,8 @@ export const optionSetMappings: Record<string, Record<number, string>> = {
     2: "Ask",
   },
   datavalidationmodeforexporttoexcel: {
-    0: "Block",
-    1: "Warn",
+    0: "Full",
+    1: "None",
   },
   reportscripterrors: {
     1: "Ask me for permission to send an error report to Microsoft",
@@ -77,6 +78,21 @@ export const optionSetMappings: Record<string, Record<number, string>> = {
     75: "75",
     100: "100",
     250: "250",
+  },
+  displaydensity: {
+    0: "Default",
+    1: "Comfortable",
+    2: "Cozy",
+    3: "Compact",
+  },
+  entityformmode: {
+    0: "Organization default",
+    1: "Read-optimized",
+    2: "Edit",
+  },
+  visualizationpanelayout: {
+    0: "Top-bottom",
+    1: "Side-by-side",
   },
 };
 

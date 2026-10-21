@@ -32,6 +32,7 @@ export const Overview: React.FC<IOverviewProps> = ({ connection }) => {
   const [selectedSystemusers, setSelectedSystemusers] = useState<Systemuser[]>(
     []
   );
+  const [detailsPanelWidth, setDetailsPanelWidth] = useState(40);
   const [sitemapData, setSitemapData] = useState<SitemapData>({
     areas: [],
     subAreas: [],
@@ -54,27 +55,48 @@ export const Overview: React.FC<IOverviewProps> = ({ connection }) => {
   const useStyles = makeStyles({
     mainContainer: {
       display: "flex",
-      gap: "16px",
+      gap: "4px",
       height: "100%",
+      minHeight: 0,
+      minWidth: 0,
       overflow: "hidden",
     },
     leftPanel: {
-      flex: "0 0 60%",
+      flex: "1 1 0",
       display: "flex",
       flexDirection: "column",
       overflow: "hidden",
       minHeight: 0,
+      minWidth: 0,
+    },
+    leftPanelFullWidth: {
+      flex: "1 1 100%",
     },
     rightPanel: {
-      flex: "0 0 40%",
+      flex: `0 0 ${detailsPanelWidth}%`,
       display: "flex",
       flexDirection: "column",
       borderLeft: `2px solid ${tokens.colorNeutralStroke1}`,
-      paddingLeft: "20px",
       borderRadius: tokens.borderRadiusMedium,
-      padding: "20px",
-      overflowY: "auto",
+      padding: "16px 8px",
+      overflow: "hidden",
       minHeight: 0,
+      minWidth: 0,
+    },
+    resizeHandle: {
+      flex: "0 0 8px",
+      cursor: "col-resize",
+      touchAction: "none",
+      backgroundColor: "transparent",
+      borderRadius: tokens.borderRadiusMedium,
+      outlineStyle: "none",
+      ":hover": {
+        backgroundColor: tokens.colorNeutralBackground3,
+      },
+      ":focus-visible": {
+        backgroundColor: tokens.colorNeutralBackground3,
+        outline: `2px solid ${tokens.colorCompoundBrandStroke}`,
+      },
     },
     filterContainer: {
       display: "flex",
@@ -101,6 +123,24 @@ export const Overview: React.FC<IOverviewProps> = ({ connection }) => {
   });
 
   const styles = useStyles();
+
+  const resizeDetailsPanel = (clientX: number, container: HTMLElement) => {
+    const { left, width } = container.getBoundingClientRect();
+    if (width === 0) return;
+
+    const nextWidth = ((left + width - clientX - 16) / width) * 100;
+    setDetailsPanelWidth(Math.min(70, Math.max(25, nextWidth)));
+  };
+
+  const handleResizeKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+
+    event.preventDefault();
+    const adjustment = event.key === "ArrowLeft" ? 2 : -2;
+    setDetailsPanelWidth((width) =>
+      Math.min(70, Math.max(25, width + adjustment))
+    );
+  };
 
   useEffect(() => {
     const initialize = async () => {
@@ -135,6 +175,7 @@ export const Overview: React.FC<IOverviewProps> = ({ connection }) => {
 
   const querySystemusers = useCallback(async () => {
     try {
+      setSelectedSystemusers([]);
       setIsLoadingSystemusers(true);
 
       // Load languages first to determine preferred language for sitemap
@@ -220,7 +261,9 @@ export const Overview: React.FC<IOverviewProps> = ({ connection }) => {
         </div>
       ) : (
         <>
-          <div className={styles.leftPanel}>
+          <div
+            className={`${styles.leftPanel} ${selectedSystemusers.length === 0 ? styles.leftPanelFullWidth : ""}`}
+          >
             <div className={styles.filterContainer}>
               <Filter
                 businessunits={businessunits}
@@ -239,17 +282,47 @@ export const Overview: React.FC<IOverviewProps> = ({ connection }) => {
               />
             </div>
           </div>
-          <div className={styles.rightPanel}>
-            <SystemuserDetails
-              systemusers={selectedSystemusers}
-              sitemapData={sitemapData}
-              timezones={timezones}
-              languages={languages}
-              formats={formats}
-              dashboards={dashboards}
-              currencies={currencies}
-            />
-          </div>
+          {selectedSystemusers.length > 0 && (
+            <>
+              <div
+                className={styles.resizeHandle}
+                role="separator"
+                aria-label="Resize user details panel"
+                aria-orientation="vertical"
+                aria-valuemin={25}
+                aria-valuemax={70}
+                aria-valuenow={Math.round(detailsPanelWidth)}
+                tabIndex={0}
+                onKeyDown={handleResizeKeyDown}
+                onPointerDown={(event) => {
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                  resizeDetailsPanel(
+                    event.clientX,
+                    event.currentTarget.parentElement!
+                  );
+                }}
+                onPointerMove={(event) => {
+                  if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                    resizeDetailsPanel(
+                      event.clientX,
+                      event.currentTarget.parentElement!
+                    );
+                  }
+                }}
+              />
+              <div className={styles.rightPanel}>
+                <SystemuserDetails
+                  systemusers={selectedSystemusers}
+                  sitemapData={sitemapData}
+                  timezones={timezones}
+                  languages={languages}
+                  formats={formats}
+                  dashboards={dashboards}
+                  currencies={currencies}
+                />
+              </div>
+            </>
+          )}
         </>
       )}
     </div>

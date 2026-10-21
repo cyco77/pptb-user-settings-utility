@@ -1,0 +1,11 @@
+import { cleanup } from "@testing-library/react";
+import { afterEach } from "vitest";
+
+Object.defineProperty(globalThis, "NodeFilter", {
+  configurable: true,
+  value: window.NodeFilter,
+});
+
+afterEach(() => {
+  cleanup();
+});
